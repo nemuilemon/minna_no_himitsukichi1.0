@@ -1,0 +1,166 @@
+/* src/components/TodoList.css */
+
+.todo-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.todo-container h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.error-message {
+  color: #d9534f;
+  background-color: #f2dede;
+  border: 1px solid #ebccd1;
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.todo-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.todo-form input[type="text"] {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.todo-input-title {
+  flex-grow: 3; /* タイトル欄を広く */
+}
+
+.todo-input-category {
+  flex-grow: 1; /* カテゴリ欄は少し狭く */
+}
+
+
+.todo-form button {
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.todo-form button:hover {
+  background-color: #4cae4c;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.todo-list li:hover {
+  background-color: #f1f1f1;
+}
+
+.todo-list li.completed .todo-title {
+  text-decoration: line-through;
+  color: #aaa;
+}
+
+.todo-item-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-grow: 1;
+}
+
+.todo-item-main input[type="checkbox"] {
+    cursor: pointer;
+    transform: scale(1.2);
+}
+
+.todo-title {
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.todo-category {
+    font-size: 0.8rem;
+    padding: 3px 8px;
+    background-color: #0275d8;
+    color: white;
+    border-radius: 10px;
+    white-space: nowrap; /* カテゴリが長くても改行しない */
+}
+
+.button-group {
+    display: flex;
+    gap: 8px;
+}
+
+.button-group button {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+}
+
+.edit-button {
+  background-color: #f0ad4e;
+}
+.edit-button:hover {
+  background-color: #eea236;
+}
+
+.delete-button {
+  background-color: #d9534f;
+}
+.delete-button:hover {
+  background-color: #d43f3a;
+}
+
+.edit-form {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+.edit-form input {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 4px;
+}
+.edit-form button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+}
+.edit-form button[type="submit"] {
+    background-color: #5cb85c;
+}
+.edit-form button[type="button"] {
+    background-color: #777;
+}

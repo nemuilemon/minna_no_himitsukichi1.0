@@ -1,0 +1,58 @@
+/* src/components/Transactions.css */
+
+.transactions-container {
+  padding: 1rem;
+}
+
+.summary-card {
+  margin-bottom: 2rem !important;
+}
+
+.summary-content {
+  display: flex;
+  justify-content: space-around;
+}
+
+.income-text {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.expense-text {
+  color: #f44336;
+  font-weight: bold;
+}
+
+.balance-text {
+  font-weight: bold;
+}
+
+.form-card {
+  margin-bottom: 2rem !important;
+}
+
+.transaction-list-item {
+  border-bottom: 1px solid #eee;
+}
+
+.category-management-container {
+  margin: 2rem 0;
+}
+
+.category-management-content {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.category-list {
+  list-style: none;
+  padding: 0;
+}
+
+.category-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
