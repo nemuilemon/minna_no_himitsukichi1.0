@@ -1,58 +1,73 @@
 /* src/components/Dashboard.css */
 
+/* --- サマリーカードの基本スタイル --- */
 .summary-card {
-  padding: 16px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
+.summary-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
 .summary-card-title {
   display: flex;
   align-items: center;
-  margin-bottom: 12px !important; /* MUI Typographyのデフォルトマージンを上書き */
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
+  margin-bottom: 16px;
+  font-weight: bold;
+  color: #333;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 12px;
 }
 
-.budget-summary {
-  background-color: #e3f2fd; /* 薄い青 */
+/* --- カードごとのアクセントカラー --- */
+.budget-summary .summary-card-title {
+  border-color: #4caf50; /* Green */
 }
 
-.event-summary {
-  background-color: #e8f5e9; /* 薄い緑 */
+.event-summary .summary-card-title {
+  border-color: #2196f3; /* Blue */
 }
 
-.todo-summary {
-  background-color: #f3e5f5; /* 薄い紫 */
+.todo-summary .summary-card-title {
+  border-color: #ff9800; /* Orange */
 }
 
+/* --- 家計簿サマリー内のスタイル --- */
 .summary-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 12px;
   padding: 8px 0;
 }
 
 .income-text {
-  color: #2e7d32; /* 緑 */
+  color: #2e7d32; /* 濃い緑 */
   font-weight: bold;
 }
 
 .expense-text {
-  color: #d32f2f; /* 赤 */
+  color: #c62828; /* 濃い赤 */
   font-weight: bold;
 }
 
-/* ListItemのpaddingを調整 */
-.summary-card .MuiListItem-root {
-  padding-left: 0;
-  padding-right: 0;
+.summary-card hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 8px 0;
 }
 
-/* カード内のLinkをフッターのように配置 */
-.summary-card .MuiLink-root {
-  margin-top: auto; /* 上の要素を押し上げて一番下に配置 */
-  padding-top: 8px;
-  text-align: right;
+/* --- カード内のリンクスタイル --- */
+.summary-card a {
+  margin-top: auto; /* リンクをカードの下部に配置 */
+  align-self: flex-end; /* 右端に寄せる */
+  text-decoration: none;
+  font-weight: bold;
 }

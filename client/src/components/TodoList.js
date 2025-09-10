@@ -230,7 +230,7 @@ const TodoList = () => {
               <TextField label="タイトル" value={title} onChange={(e) => setTitle(e.target.value)} fullWidth required />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <FormControl fullWidth>
+              <FormControl sx={{ minWidth: 120, flexGrow: 1 }}>
                 <InputLabel>カテゴリ</InputLabel>
                 <Select value={categoryId} label="カテゴリ" onChange={(e) => setCategoryId(e.target.value)}>
                   <MenuItem value=""><em>カテゴリなし</em></MenuItem>

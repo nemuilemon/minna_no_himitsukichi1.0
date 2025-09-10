@@ -64,7 +64,7 @@ const Login = () => {
   return (
     <div className="login-container">
       <form onSubmit={handleSubmit} className="login-form">
-        <h2>ログイン</h2>
+        <h2>皆の秘密基地へようこそ！</h2>
         {error && <p className="error-message">{error}</p>}
         <div className="input-group">
           <label htmlFor="username">ユーザー名</label>

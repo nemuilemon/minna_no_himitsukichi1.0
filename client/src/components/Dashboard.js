@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemButton, ListItemIcon, 
-  ListItemText, Box, CssBaseline, Button, Grid, Paper, CircularProgress, Alert, Link
+  ListItemText, Box, CssBaseline, Button, Grid, Paper, CircularProgress, Alert, Link, Tooltip
 } from '@mui/material';
 import { 
   Checklist, Event, AccountBalanceWallet, Dashboard as DashboardIcon,
-  Schedule, Task, Celebration as CelebrationIcon, Assignment as AssignmentIcon, Savings as SavingsIcon
+  Schedule, Task, Celebration as CelebrationIcon, Assignment as AssignmentIcon, Savings as SavingsIcon,
+  ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon
 } from '@mui/icons-material';
 import TodoList from './TodoList';
 import EventCalendar from './Calendar'; 
@@ -74,6 +75,67 @@ const DashboardSummary = ({ setSelectedComponent }) => {
       <Typography variant="h4" gutterBottom>ダッシュボード</Typography>
       <Grid container spacing={3}>
         
+
+                {/* 優先ToDo */}
+        <Grid item xs={12} md={4}>
+          <Paper className="summary-card todo-summary">
+            <Typography variant="h6" className="summary-card-title">
+              <Task sx={{ mr: 1 }} /> ToDo
+            </Typography>
+            {todos.length > 0 ? (
+              <List dense>
+                {todos.map(todo => (
+                  <ListItem key={todo.id}>
+                    <ListItemText 
+                      primary={todo.title}
+                      secondary={todo.due_date ? `期限: ${new Date(todo.due_date).toLocaleDateString()}` : '期限なし'}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <EmptyState 
+                icon={<AssignmentIcon sx={{ fontSize: 40 }} />}
+                title="優先ToDoはありません"
+                message="新しい目標を追加しましょう！"
+              />
+            )}
+            <Link component="button" variant="body2" onClick={() => setSelectedComponent('todo')} sx={{ mt: 2 }}>
+              ToDoリスト全体を見る
+            </Link>
+          </Paper>
+        </Grid>
+
+
+        {/* 今日の予定 */}
+        <Grid item xs={12} md={4}>
+          <Paper className="summary-card event-summary">
+            <Typography variant="h6" className="summary-card-title">
+              <Schedule sx={{ mr: 1 }} /> 今日の予定
+            </Typography>
+            {events.length > 0 ? (
+              <List dense>
+                {events.slice(0, 3).map(event => (
+                  <ListItem key={event.id}>
+                    <ListItemText 
+                      primary={event.title}
+                      secondary={`${new Date(event.start_at).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end_at).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}`} 
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <EmptyState 
+                icon={<CelebrationIcon sx={{ fontSize: 40 }} />}
+                title="今日の予定はありません"
+                message="ゆっくりリラックスしましょう！"
+              />
+            )}
+            <Link component="button" variant="body2" onClick={() => setSelectedComponent('calendar')} sx={{ mt: 2 }}>
+              カレンダー全体を見る
+            </Link>
+          </Paper>
+        </Grid>
         {/* 家計簿サマリー */}
         <Grid item xs={12} md={4}>
           <Paper className="summary-card budget-summary">
@@ -111,66 +173,7 @@ const DashboardSummary = ({ setSelectedComponent }) => {
           </Paper>
         </Grid>
 
-        {/* 今日の予定 */}
-        <Grid item xs={12} md={4}>
-          <Paper className="summary-card event-summary">
-            <Typography variant="h6" className="summary-card-title">
-              <Schedule sx={{ mr: 1 }} /> 今日の予定
-            </Typography>
-            {events.length > 0 ? (
-              <List dense>
-                {events.slice(0, 3).map(event => (
-                  <ListItem key={event.id}>
-                    <ListItemText 
-                      primary={event.title}
-                      secondary={`${new Date(event.start_at).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end_at).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}`} 
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <EmptyState 
-                icon={<CelebrationIcon sx={{ fontSize: 40 }} />}
-                title="今日の予定はありません"
-                message="ゆっくりリラックスしましょう！"
-              />
-            )}
-            <Link component="button" variant="body2" onClick={() => setSelectedComponent('calendar')} sx={{ mt: 2 }}>
-              カレンダー全体を見る
-            </Link>
-          </Paper>
-        </Grid>
-
-        {/* 優先ToDo */}
-        <Grid item xs={12} md={4}>
-          <Paper className="summary-card todo-summary">
-            <Typography variant="h6" className="summary-card-title">
-              <Task sx={{ mr: 1 }} /> 優先ToDo
-            </Typography>
-            {todos.length > 0 ? (
-              <List dense>
-                {todos.map(todo => (
-                  <ListItem key={todo.id}>
-                    <ListItemText 
-                      primary={todo.title}
-                      secondary={todo.due_date ? `期限: ${new Date(todo.due_date).toLocaleDateString()}` : '期限なし'}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <EmptyState 
-                icon={<AssignmentIcon sx={{ fontSize: 40 }} />}
-                title="優先ToDoはありません"
-                message="新しい目標を追加しましょう！"
-              />
-            )}
-            <Link component="button" variant="body2" onClick={() => setSelectedComponent('todo')} sx={{ mt: 2 }}>
-              ToDoリスト全体を見る
-            </Link>
-          </Paper>
-        </Grid>
-
+        
       </Grid>
     </Box>
   );
@@ -181,6 +184,11 @@ const DashboardSummary = ({ setSelectedComponent }) => {
 const Dashboard = () => { 
   const { logout } = useAuth();
   const [selectedComponent, setSelectedComponent] = useState('dashboard');
+  const [drawerOpen, setDrawerOpen] = useState(true);
+
+  const handleDrawerToggle = () => {
+    setDrawerOpen(!drawerOpen);
+  };
 
   const renderComponent = () => {
     switch (selectedComponent) {
@@ -204,14 +212,21 @@ const Dashboard = () => {
     { text: '家計簿', icon: <AccountBalanceWallet />, component: 'budget' },
   ];
 
-  const drawerWidth = 240;
+  const drawerWidth = drawerOpen ? 240 : 70;
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar
         position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+        sx={{
+          width: `calc(100% - ${drawerWidth}px)`,
+          ml: `${drawerWidth}px`,
+          transition: (theme) => theme.transitions.create(['margin', 'width'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+          }),
+        }}
       >
         <Toolbar>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
@@ -223,30 +238,52 @@ const Dashboard = () => {
         </Toolbar>
       </AppBar>
       <Drawer
+        variant="permanent"
         sx={{
           width: drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
+            transition: (theme) => theme.transitions.create('width', {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+            overflowX: 'hidden',
           },
         }}
-        variant="permanent"
         anchor="left"
       >
         <Toolbar />
         <List>
           {menuItems.map((item) => (
-            <ListItem key={item.text} disablePadding>
-              <ListItemButton 
-                selected={selectedComponent === item.component}
-                onClick={() => setSelectedComponent(item.component)}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
-              </ListItemButton>
-            </ListItem>
+            <Tooltip title={drawerOpen ? '' : item.text} placement="right" key={item.text}>
+              <ListItem disablePadding>
+                  <ListItemButton 
+                    selected={selectedComponent === item.component}
+                    onClick={() => setSelectedComponent(item.component)}
+                    sx={{ justifyContent: drawerOpen ? 'initial' : 'center', px: 2.5 }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 0, mr: drawerOpen ? 3 : 'auto', justifyContent: 'center' }}>
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText primary={item.text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
+                  </ListItemButton>
+              </ListItem>
+            </Tooltip>
           ))}
+        </List>
+        <Box sx={{ flexGrow: 1 }} />
+        <List>
+          <ListItem disablePadding>
+            <Tooltip title={drawerOpen ? "折りたたむ" : "展開する"} placement="right">
+              <ListItemButton onClick={handleDrawerToggle} sx={{ justifyContent: 'center', py: 2 }}>
+                <ListItemIcon sx={{ minWidth: 0, justifyContent: 'center' }}>
+                  {drawerOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                </ListItemIcon>
+              </ListItemButton>
+            </Tooltip>
+          </ListItem>
         </List>
       </Drawer>
       <Box
