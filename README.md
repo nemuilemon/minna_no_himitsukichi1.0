@@ -1,161 +1,87 @@
-<<<<<<< HEAD
-Of course. Here is the `readme.md` for the "皆の秘密基地" (Everyone's Secret Base) project.
+# My Secret Base - A Personal Dashboard
 
------
+**A central hub for your daily life, bringing together your schedule, tasks, and finances in one beautifully designed, private space.**
 
-# **皆の秘密基地 (Everyone's Secret Base)**
+This project was born from a desire to create a personal, all-in-one dashboard to manage the essential parts of my daily life. It has evolved from a simple monolithic application into a more robust, scalable, and maintainable full-stack application.
 
-This is a web application designed to comprehensively manage your life. It's not just a simple task manager; it's a tool to visualize and organize your life's goals, daily schedule, and finances all in one place. A unique feature is the **"Survival Confirmation"** function, which automatically sends an email to check on your well-being if you haven't accessed the app for a certain period.
+---
 
-## **✨ Features**
+## Features
 
-  * **User Management**: Securely manage your data with account registration and login functionalities.
-  * **Life ToDo List**: This is the core feature. It allows you to list and manage your life goals and things you want to accomplish. You can categorize your ToDos and intuitively reorder them using drag-and-drop.
-  * **Schedule Management**: A calendar feature to register, edit, and delete your appointments.
-  * **Household Finances**: Keep track of your income and expenses, allowing you to see your monthly balance at a glance. You can also manage expense categories.
-  * **Survival Confirmation**: A unique feature that sends an automatic email to your registered address if the application is not accessed for a set period, checking on your safety.
+- **Unified Dashboard:** A single view of your most important information: today's events, high-priority tasks, and a monthly financial summary.
+- **Financial Tracker:** Log income and expenses, categorize transactions, and visualize your spending habits with an interactive chart.
+- **To-Do List:** A powerful to-do list with drag-and-drop reordering and category management.
+- **Calendar:** A full-featured calendar to manage your schedule and events.
+- **Guest Login:** Allow users to try out the application without creating an account.
+- **Secure Authentication:** JWT-based authentication to protect your data.
 
-## **🛠️ Technology Stack**
+### Screenshots
 
-  * **Frontend**: React
-  * **Backend**: Node.js
-  * **Database**: PostgreSQL
-  * **Authentication**: JWT (JSON Web Tokens)
-  * **Key Libraries**:
-      * `@hello-pangea/dnd` for drag-and-drop functionality in the ToDo list.
-      * `node-cron` for scheduling the survival confirmation check.
-      * `nodemailer` for sending emails.
+| Dashboard | Financial Tracker |
+| :---: | :---: |
+| ![Dashboard Screenshot](https://i.imgur.com/example.png) | ![Financial Tracker Screenshot](https://i.imgur.com/example.png) |
 
-## **🚀 Getting Started**
+| To-Do List | Calendar |
+| :---: | :---: |
+| ![To-Do List Screenshot](https://i.imgur.com/example.png) | ![Calendar Screenshot](https://i.imgur.com/example.png) |
 
-### **Prerequisites**
+---
 
-Make sure you have the following installed:
+## Tech Stack
 
-  * Node.js
-  * PostgreSQL
-  * npm (or yarn)
+### Backend
 
-### **Installation**
+- **Runtime:** Node.js
+- **Framework:** Express.js
+- **Database:** PostgreSQL
+- **Authentication:** JSON Web Tokens (JWT)
+- **Security:** Helmet, CORS, express-rate-limit
 
-1.  **Clone the repository:**
+### Frontend
 
-    ```bash
-    git clone https://github.com/your-username/minna-no-himitsukichi.git
-    cd minna-no-himitsukichi
-    ```
+- **Library:** React
+- **UI:** Material-UI
+- **Styling:** CSS, Emotion
+- **State Management:** React Context API
+- **HTTP Client:** Axios
+- **Date Management:** Day.js
 
-2.  **Install backend dependencies:**
+### Development
 
-    ```bash
-    # Navigate to the server directory
-    cd server
-    npm install
-    ```
+- **Package Manager:** npm
+- **Server Auto-Reload:** nodemon
 
-3.  **Install frontend dependencies:**
+---
 
-    ```bash
-    # Navigate to the client directory
-    cd ../client
-    npm install
-    ```
+## Learning & Growth
 
-4.  **Set up the database:**
+This project has been a significant learning experience, particularly in the area of refactoring and application architecture.
 
-      * Create a new PostgreSQL database.
-      * Execute the table creation SQL statements found in the database schema to set up the `users`, `todos`, `events`, `transactions`, and `categories` tables.
+### From Monolith to Modular
 
-5.  **Configure environment variables:**
+The initial version of the application was a single `server.js` file that handled everything from server setup to API logic. This quickly became difficult to manage and scale.
 
-      * Create a `.env` file in the `server` directory and add your database connection details and JWT secret.
-      * Create a `.env` file in the `client` directory to configure the backend API endpoint if necessary.
+**The Challenge:** As new features were added, the `server.js` file grew to over 500 lines of code. It was difficult to find specific routes, and the code was tightly coupled, making it hard to debug and test.
 
-6.  **Run the application:**
+**The Solution:** I undertook a major refactoring effort to move from a monolithic to a modular architecture. This involved:
 
-      * **Start the backend server:** In the `server` directory, run `npm start`.
-      * **Start the frontend development server:** In the `client` directory, run `npm start`.
+1.  **Separating Concerns:** I created a `routes` directory to house the API logic for each feature (e.g., `todos.js`, `transactions.js`).
+2.  **Database Abstraction:** The database connection logic was moved to a separate `db.js` file.
+3.  **Middleware:** The authentication logic was extracted into a `middleware/auth.js` file.
+4.  **Error Handling:** A centralized error handling middleware was implemented to reduce code duplication and provide consistent error responses.
 
-## **📈 Project Status**
+This refactoring resulted in a much cleaner, more organized, and more maintainable codebase.
 
-**Phase 1: Initial Version Development (Completed)**
+### Enhancing the User Experience
 
-  * **User Management**: Account registration and login are fully functional.
-  * **Life ToDo List**: Full CRUD (Create, Read, Update, Delete) functionality is implemented, including category selection and drag-and-drop reordering.
-  * **Schedule Management**: Full CRUD functionality for calendar events is complete.
-  * **Household Finances**: Full CRUD functionality for transactions is complete, including category management.
-  * **Survival Confirmation**: The backend logic for detecting inactive users and sending emails is implemented.
+Early versions of the application had a very basic UI and lacked user feedback.
 
-The project has successfully completed the development of all core features for its initial version. The next phase will involve UI/UX improvements, testing, and potential deployment.
-=======
-# Getting Started with Create React App
+**The Challenge:** The UI was inconsistent across different features, and there was no visual feedback for actions like saving or deleting data. This resulted in a poor user experience.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**The Solution:** I decided to adopt Material-UI as the primary UI library to create a more consistent and modern look and feel. I also implemented the following improvements:
 
-## Available Scripts
+- **Snackbar Notifications:** Replaced browser `alert()`s with `Snackbar` notifications for a less intrusive user experience.
+- **Loading Indicators:** Added loading spinners to provide visual feedback when data is being fetched from the server.
+- **Empty States:** Designed "empty state" components to guide users when there is no data to display.
 
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
->>>>>>> origin/client
+These changes significantly improved the overall user experience and made the application more intuitive and enjoyable to use.
