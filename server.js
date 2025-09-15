@@ -116,7 +116,5 @@ cron.schedule('0 1 * * *', async () => {
 // --- ▲▲ ここまで「生存確認」機能の実装 ---
 
 // エラーハンドリングミドルウェア
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
+const errorHandler = require('./middleware/errorHandler');
+app.use(errorHandler);
