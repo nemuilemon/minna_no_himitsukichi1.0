@@ -19,7 +19,6 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import './Transactions.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 

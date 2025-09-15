@@ -1,58 +1,6 @@
-/* src/components/Dashboard.css */
-
-.summary-card {
-  padding: 16px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.summary-card-title {
-  display: flex;
-  align-items: center;
-  margin-bottom: 12px !important; /* MUI Typographyのデフォルトマージンを上書き */
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
-}
-
-.budget-summary {
-  background-color: #e3f2fd; /* 薄い青 */
-}
-
-.event-summary {
-  background-color: #e8f5e9; /* 薄い緑 */
-}
-
-.todo-summary {
-  background-color: #f3e5f5; /* 薄い紫 */
-}
-
-.summary-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-}
-
-.income-text {
-  color: #2e7d32; /* 緑 */
-  font-weight: bold;
-}
-
-.expense-text {
-  color: #d32f2f; /* 赤 */
-  font-weight: bold;
-}
-
-/* ListItemのpaddingを調整 */
-.summary-card .MuiListItem-root {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-/* カード内のLinkをフッターのように配置 */
-.summary-card .MuiLink-root {
-  margin-top: auto; /* 上の要素を押し上げて一番下に配置 */
-  padding-top: 8px;
-  text-align: right;
-}
+/*
+DEPRECATED: This CSS file is no longer used.
+The Dashboard component and its sub-components have been migrated to use Material-UI components and styling.
+All styles are now handled via MUI's sx prop and theme system.
+This file can be safely removed in the future.
+*/

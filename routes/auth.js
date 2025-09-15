@@ -74,8 +74,8 @@ router.post('/guest-login', async (req, res) => {
 
         res.json({ token });
     } catch (err) {
-        console.error(err.message);
         console.error('GUEST LOGIN ERROR:', err);
+        res.status(500).json({ error: 'ゲストログインに失敗しました。' });
     }
 });
 
