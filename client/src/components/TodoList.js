@@ -3,13 +3,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { 
-  Box, Paper, Typography, Grid, TextField, Button, Select, MenuItem, 
-  List, ListItem, ListItemText, IconButton, Dialog, DialogActions, 
-  DialogContent, DialogTitle, Snackbar, Alert, FormControl, InputLabel, Checkbox,
-  CircularProgress, Icon
+import {
+  Box, Paper, Typography, Grid, TextField, Button, Select, MenuItem,
+  List, ListItem, ListItemText, IconButton, Dialog, DialogActions,
+  DialogContent, DialogTitle, FormControl, InputLabel, Checkbox,
+  CircularProgress
 } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon, PlaylistAddCheck as PlaylistAddCheckIcon } from '@mui/icons-material';
+import { useNotification } from '../context/NotificationContext';
 
 const TodoList = () => {
   // --- ステート定義 ---
@@ -17,7 +18,7 @@ const TodoList = () => {
   const [categories, setCategories] = useState([]);
   const [title, setTitle] = useState('');
   const [categoryId, setCategoryId] = useState('');
-  
+
   // 編集用
   const [editingTodo, setEditingTodo] = useState(null);
 
@@ -29,7 +30,7 @@ const TodoList = () => {
 
   // UI制御用
   const [loading, setLoading] = useState(true);
-  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
+  const { showSuccess, showError, showWarning } = useNotification();
   const token = localStorage.getItem('token');
 
   // --- データ取得 ---
@@ -44,11 +45,11 @@ const TodoList = () => {
       setTodos(todosRes.data);
       setCategories(categoriesRes.data);
     } catch (err) {
-      setNotification({ open: true, message: 'データの取得に失敗しました。', severity: 'error' });
+      showError('データの取得に失敗しました。');
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, showError]);
 
   useEffect(() => {
     fetchData();
@@ -58,7 +59,7 @@ const TodoList = () => {
   const handleAddTodo = async (e) => {
     e.preventDefault();
     if (!title.trim()) {
-      setNotification({ open: true, message: 'タイトルを入力してください。', severity: 'warning' });
+      showWarning('タイトルを入力してください。');
       return;
     }
     try {
@@ -67,15 +68,15 @@ const TodoList = () => {
       setTodos([response.data, ...todos]);
       setTitle('');
       setCategoryId('');
-      setNotification({ open: true, message: 'ToDoを追加しました。', severity: 'success' });
+      showSuccess('ToDoを追加しました。');
     } catch (err) {
-      setNotification({ open: true, message: 'ToDoの追加に失敗しました。', severity: 'error' });
+      showError('ToDoの追加に失敗しました。');
     }
   };
 
   const handleUpdateTodo = async () => {
     if (!editingTodo || !editingTodo.title.trim()) {
-      setNotification({ open: true, message: 'タイトルを入力してください。', severity: 'warning' });
+      showWarning('タイトルを入力してください。');
       return;
     }
     try {
@@ -84,9 +85,9 @@ const TodoList = () => {
       const response = await axios.put(`/api/todos/${id}`, updatedData, { headers: { Authorization: `Bearer ${token}` } });
       setTodos(todos.map(todo => (todo.id === id ? response.data : todo)));
       setEditingTodo(null);
-      setNotification({ open: true, message: 'ToDoを更新しました。', severity: 'success' });
+      showSuccess('ToDoを更新しました。');
     } catch (err) {
-      setNotification({ open: true, message: 'ToDoの更新に失敗しました。', severity: 'error' });
+      showError('ToDoの更新に失敗しました。');
     }
   };
 
@@ -96,7 +97,7 @@ const TodoList = () => {
       const response = await axios.put(`/api/todos/${todo.id}`, updatedData, { headers: { Authorization: `Bearer ${token}` } });
       setTodos(todos.map(t => (t.id === todo.id ? response.data : t)));
     } catch (err) {
-       setNotification({ open: true, message: 'ToDoの状態更新に失敗しました。', severity: 'error' });
+       showError('ToDoの状態更新に失敗しました。');
     }
   };
 
@@ -104,9 +105,9 @@ const TodoList = () => {
     try {
       await axios.delete(`/api/todos/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       setTodos(todos.filter(todo => todo.id !== id));
-      setNotification({ open: true, message: 'ToDoを削除しました。', severity: 'success' });
+      showSuccess('ToDoを削除しました。');
     } catch (err) {
-      setNotification({ open: true, message: 'ToDoの削除に失敗しました。', severity: 'error' });
+      showError('ToDoの削除に失敗しました。');
     }
   };
 
@@ -120,7 +121,7 @@ const TodoList = () => {
     try {
       await axios.put('/api/todos/reorder', { todos: items }, { headers: { Authorization: `Bearer ${token}` } });
     } catch (err) {
-      setNotification({ open: true, message: 'ToDoの並び替えに失敗しました。', severity: 'error' });
+      showError('ToDoの並び替えに失敗しました。');
       fetchData(); // エラー時はサーバーの状態に同期
     }
   };
@@ -128,7 +129,7 @@ const TodoList = () => {
   // --- カテゴリー操作ハンドラ ---
   const handleAddCategory = async () => {
     if (!newCategoryName.trim()) {
-      setNotification({ open: true, message: 'カテゴリー名を入力してください。', severity: 'warning' });
+      showWarning('カテゴリー名を入力してください。');
       return;
     }
     try {
@@ -136,9 +137,9 @@ const TodoList = () => {
       setNewCategoryName('');
       // カテゴリだけ再取得
       axios.get('/api/todo-categories', { headers: { Authorization: `Bearer ${token}` } }).then(res => setCategories(res.data));
-      setNotification({ open: true, message: 'カテゴリーを追加しました。', severity: 'success' });
+      showSuccess('カテゴリーを追加しました。');
     } catch (err) {
-      setNotification({ open: true, message: 'カテゴリーの追加に失敗しました。', severity: 'error' });
+      showError('カテゴリーの追加に失敗しました。');
     }
   };
 
@@ -148,9 +149,9 @@ const TodoList = () => {
       await axios.put(`/api/todo-categories/${editCategory.id}`, { name: editCategory.name }, { headers: { Authorization: `Bearer ${token}` } });
       axios.get('/api/todo-categories', { headers: { Authorization: `Bearer ${token}` } }).then(res => setCategories(res.data));
       setEditCategory(null);
-      setNotification({ open: true, message: 'カテゴリーを更新しました。', severity: 'success' });
+      showSuccess('カテゴリーを更新しました。');
     } catch (err) {
-      setNotification({ open: true, message: err.response?.data?.error || 'カテゴリーの更新に失敗しました。', severity: 'error' });
+      showError(err.response?.data?.error || 'カテゴリーの更新に失敗しました。');
     }
   };
 
@@ -160,9 +161,9 @@ const TodoList = () => {
       await axios.delete(`/api/todo-categories/${deleteCategory.id}`, { headers: { Authorization: `Bearer ${token}` } });
       axios.get('/api/todo-categories', { headers: { Authorization: `Bearer ${token}` } }).then(res => setCategories(res.data));
       setDeleteCategory(null);
-      setNotification({ open: true, message: 'カテゴリーを削除しました。', severity: 'success' });
+      showSuccess('カテゴリーを削除しました。');
     } catch (err) {
-      setNotification({ open: true, message: err.response?.data?.error || 'カテゴリーの削除に失敗しました。', severity: 'error' });
+      showError(err.response?.data?.error || 'カテゴリーの削除に失敗しました。');
     }
   };
 
@@ -341,12 +342,6 @@ const TodoList = () => {
         </DialogActions>
       </Dialog>
 
-      {/* 通知 */}
-      <Snackbar open={notification.open} autoHideDuration={6000} onClose={() => setNotification({ ...notification, open: false })}>
-        <Alert onClose={() => setNotification({ ...notification, open: false })} severity={notification.severity} sx={{ width: '100%' }}>
-          {notification.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };

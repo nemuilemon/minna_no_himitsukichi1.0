@@ -33,6 +33,20 @@ class EventModel {
     return result.rows;
   }
 
+  static async getUpcoming(userId, days = 7) {
+    const result = await pool.query(
+      `SELECT * FROM events
+       WHERE user_id = $1
+       AND start_at >= CURRENT_DATE
+       AND start_at <= CURRENT_DATE + INTERVAL '${days} days'
+       ORDER BY start_at ASC
+       LIMIT 10`,
+      [userId]
+    );
+
+    return result.rows;
+  }
+
   static async findByIdAndUser(id, userId) {
     const result = await pool.query("SELECT * FROM events WHERE id = $1 AND user_id = $2", [id, userId]);
     return result.rows[0];

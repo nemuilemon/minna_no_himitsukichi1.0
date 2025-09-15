@@ -3,11 +3,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import {
-  Box, Paper, Typography, Grid, TextField, Button, Select, MenuItem, 
-  List, ListItem, ListItemText, IconButton, Dialog, DialogActions, 
-  DialogContent, DialogTitle, Snackbar, Alert, FormControl, InputLabel, LinearProgress,
+  Box, Paper, Typography, Grid, TextField, Button, Select, MenuItem,
+  List, ListItem, ListItemText, IconButton, Dialog, DialogActions,
+  DialogContent, DialogTitle, FormControl, InputLabel, LinearProgress,
   CircularProgress
 } from '@mui/material';
+import { useNotification } from '../context/NotificationContext';
 import { 
   Delete as DeleteIcon, Edit as EditIcon, Fastfood, ShoppingCart, Commute, 
   Home, Receipt, AddCard as AddCardIcon 
@@ -43,7 +44,7 @@ const Transactions = () => {
   const [newCategoryType, setNewCategoryType] = useState('expense');
   const [editCategory, setEditCategory] = useState(null);
   const [deleteCategory, setDeleteCategory] = useState(null);
-  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
+  const { showSuccess, showError, showWarning, showInfo } = useNotification();
 
   const token = localStorage.getItem('token');
 
@@ -59,12 +60,12 @@ const Transactions = () => {
       setTransactions(transactionsRes.data);
       setCategories(categoriesRes.data);
     } catch (err) {
-      setNotification({ open: true, message: 'データの取得に失敗しました。', severity: 'error' });
+      showError('データの取得に失敗しました。');
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, showError]);
 
   useEffect(() => {
     fetchData();
@@ -129,17 +130,11 @@ const Transactions = () => {
   const budgetUsage = budget > 0 ? (summary.expense / budget) * 100 : 0;
 
   // --- イベントハンドラ ---
-  const handleNotificationClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setNotification({ ...notification, open: false });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!type || !amount || !transactionDate || !categoryId) {
-      setNotification({ open: true, message: '必須項目をすべて入力してください。', severity: 'warning' });
+      showWarning('必須項目をすべて入力してください。');
       return;
     }
     try {
@@ -151,9 +146,9 @@ const Transactions = () => {
       setAmount('');
       setCategoryId('');
       setDescription('');
-      setNotification({ open: true, message: '取引を追加しました。', severity: 'success' });
+      showSuccess('取引を追加しました。');
     } catch (err) {
-      setNotification({ open: true, message: '取引の追加に失敗しました。', severity: 'error' });
+      showError('取引の追加に失敗しました。');
       console.error(err);
     }
   };
@@ -164,9 +159,9 @@ const Transactions = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTransactions(transactions.filter(t => t.id !== id));
-      setNotification({ open: true, message: '取引を削除しました。', severity: 'success' });
+      showSuccess('取引を削除しました。');
     } catch (err) {
-      setNotification({ open: true, message: '削除に失敗しました。', severity: 'error' });
+      showError('削除に失敗しました。');
       console.error(err);
     }
   };
@@ -174,7 +169,7 @@ const Transactions = () => {
   // --- カテゴリー管理 ---
   const handleAddCategory = async () => {
     if (!newCategoryName) {
-      setNotification({ open: true, message: 'カテゴリー名を入力してください。', severity: 'warning' });
+      showWarning('カテゴリー名を入力してください。');
       return;
     }
     try {
@@ -183,16 +178,16 @@ const Transactions = () => {
       });
       setNewCategoryName('');
       axios.get('/api/categories', { headers: { Authorization: `Bearer ${token}` } }).then(res => setCategories(res.data));
-      setNotification({ open: true, message: 'カテゴリーを追加しました。', severity: 'success' });
+      showSuccess('カテゴリーを追加しました。');
     } catch (err) {
-      setNotification({ open: true, message: 'カテゴリーの追加に失敗しました。', severity: 'error' });
+      showError('カテゴリーの追加に失敗しました。');
       console.error(err);
     }
   };
 
   const handleUpdateCategory = async () => {
     if (!editCategory || !editCategory.name.trim()) {
-      setNotification({ open: true, message: 'カテゴリー名を入力してください。', severity: 'warning' });
+      showWarning('カテゴリー名を入力してください。');
       return;
     }
     try {
@@ -201,9 +196,9 @@ const Transactions = () => {
       });
       axios.get('/api/categories', { headers: { Authorization: `Bearer ${token}` } }).then(res => setCategories(res.data));
       setEditCategory(null);
-      setNotification({ open: true, message: 'カテゴリーを更新しました。', severity: 'success' });
+      showSuccess('カテゴリーを更新しました。');
     } catch (err) {
-      setNotification({ open: true, message: err.response?.data?.error || 'カテゴリーの更新に失敗しました。', severity: 'error' });
+      showError(err.response?.data?.error || 'カテゴリーの更新に失敗しました。');
       console.error(err);
     }
   };
@@ -216,9 +211,9 @@ const Transactions = () => {
       });
       axios.get('/api/categories', { headers: { Authorization: `Bearer ${token}` } }).then(res => setCategories(res.data));
       setDeleteCategory(null);
-      setNotification({ open: true, message: 'カテゴリーを削除しました。', severity: 'success' });
+      showSuccess('カテゴリーを削除しました。');
     } catch (err) {
-      setNotification({ open: true, message: err.response?.data?.error || 'カテゴリーの削除に失敗しました。', severity: 'error' });
+      showError(err.response?.data?.error || 'カテゴリーの削除に失敗しました。');
       console.error(err);
     }
   };
@@ -279,7 +274,7 @@ const Transactions = () => {
                   />
               </Grid>
               <Grid item xs={12} sm={6}>
-                  <Button variant="contained" onClick={() => setNotification({ open: true, message: '予算が設定されました！', severity: 'info' })}>予算を設定</Button>
+                  <Button variant="contained" onClick={() => showInfo('予算が設定されました！')}>予算を設定</Button>
               </Grid>
           </Grid>
           {budget > 0 && (
@@ -483,12 +478,6 @@ const Transactions = () => {
         </DialogActions>
       </Dialog>
 
-      {/* 通知 */}
-      <Snackbar open={notification.open} autoHideDuration={6000} onClose={handleNotificationClose}>
-        <Alert onClose={handleNotificationClose} severity={notification.severity} sx={{ width: '100%' }}>
-          {notification.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };

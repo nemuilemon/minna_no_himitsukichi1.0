@@ -11,7 +11,9 @@
       "Bash(node server.js)",
       "Bash(curl:*)",
       "Bash(PORT=4001 npm start)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(PORT=4002 npm start)",
+      "Bash(PORT=4003 npm start)"
     ],
     "deny": [],
     "ask": []

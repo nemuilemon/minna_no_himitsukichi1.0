@@ -43,6 +43,20 @@ router.get('/today', authenticateToken, async (req, res, next) => {
   }
 });
 
+// ## 今後の予定取得API (GET /api/events/upcoming) ##
+router.get('/upcoming', authenticateToken, async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+    const days = req.query.days ? parseInt(req.query.days) : 7;
+
+    const upcomingEvents = await EventModel.getUpcoming(userId, days);
+
+    res.json(upcomingEvents);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // ## 予定更新API (PUT /api/events/:id) ##
 router.put('/:id', authenticateToken, async (req, res, next) => {
   try {

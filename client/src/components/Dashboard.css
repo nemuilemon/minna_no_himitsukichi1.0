@@ -71,3 +71,73 @@
   text-decoration: none;
   font-weight: bold;
 }
+
+/* --- レスポンシブデザイン --- */
+@media (max-width: 768px) {
+  .summary-card {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .summary-card-title {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+
+  .summary-item {
+    margin-bottom: 8px;
+    padding: 6px 0;
+  }
+
+  /* モバイルでカードを縦に積み重ね */
+  .dashboard-grid {
+    padding: 0 8px;
+  }
+
+  /* ドロワーの調整 */
+  .mobile-drawer {
+    width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-card {
+    padding: 12px;
+  }
+
+  .summary-card-title {
+    font-size: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .summary-card-title svg {
+    margin-right: 0;
+    margin-bottom: 4px;
+  }
+
+  .summary-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
+
+/* --- プログレスバーの改善 --- */
+.budget-progress {
+  transition: all 0.3s ease-in-out;
+}
+
+.budget-progress:hover {
+  transform: scaleY(1.2);
+}
+
+/* --- カードのホバーエフェクト改善 --- */
+@media (min-width: 769px) {
+  .summary-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  }
+}

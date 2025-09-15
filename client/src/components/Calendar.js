@@ -12,9 +12,10 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 // MUI Core コンポーネントのインポート
 import {
-  Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Box, 
-  Typography, Snackbar, Alert, CircularProgress
+  Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Box,
+  CircularProgress
 } from '@mui/material';
+import { useNotification } from '../context/NotificationContext';
 
 // カレンダーの日本語化設定
 dayjs.locale('ja');
@@ -38,7 +39,7 @@ const EventCalendar = () => {
   
   // UI制御用ステート
   const [loading, setLoading] = useState(true);
-  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
+  const { showSuccess, showError, showWarning } = useNotification();
 
   const onNavigate = useCallback((newDate) => setDate(newDate), [setDate]);
   const onView = useCallback((newView) => setView(newView), [setView]);
@@ -61,15 +62,15 @@ const EventCalendar = () => {
         setEvents(formattedEvents);
       } else {
         console.error('予定の取得に失敗しました。');
-        setNotification({ open: true, message: '予定の取得に失敗しました。', severity: 'error' });
+        showError('予定の取得に失敗しました。');
       }
     } catch (error) {
       console.error('予定の取得中にエラーが発生しました:', error);
-      setNotification({ open: true, message: '予定の取得中にエラーが発生しました。', severity: 'error' });
+      showError('予定の取得中にエラーが発生しました。');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [showError]);
 
   useEffect(() => {
     fetchEvents();
@@ -104,7 +105,7 @@ const EventCalendar = () => {
     const description = formData.get('description');
 
     if (!startDate || !endDate || endDate.isBefore(startDate)) {
-      setNotification({ open: true, message: '終了日時は開始日時より後に設定してください。', severity: 'warning' });
+      showWarning('終了日時は開始日時より後に設定してください。');
       return;
     }
 
@@ -130,16 +131,16 @@ const EventCalendar = () => {
       });
 
       if (response.ok) {
-        setNotification({ open: true, message: '予定を保存しました。', severity: 'success' });
+        showSuccess('予定を保存しました。');
         fetchEvents();
         handleClose();
       } else {
         const errorData = await response.json();
-        setNotification({ open: true, message: `保存に失敗しました: ${errorData.error || '不明なエラー'}`, severity: 'error' });
+        showError(`保存に失敗しました: ${errorData.error || '不明なエラー'}`);
       }
     } catch (error) {
       console.error('保存処理中にエラー:', error);
-      setNotification({ open: true, message: 'エラーが発生しました。', severity: 'error' });
+      showError('エラーが発生しました。');
     }
   };
   
@@ -155,25 +156,19 @@ const EventCalendar = () => {
         });
 
         if (response.ok) {
-          setNotification({ open: true, message: '予定を削除しました。', severity: 'success' });
+          showSuccess('予定を削除しました。');
           fetchEvents();
           handleClose();
         } else {
-          setNotification({ open: true, message: '削除に失敗しました。', severity: 'error' });
+          showError('削除に失敗しました。');
         }
       } catch (error) {
         console.error('削除処理中にエラー:', error);
-        setNotification({ open: true, message: 'エラーが発生しました。', severity: 'error' });
+        showError('エラーが発生しました。');
       }
     }
   };
 
-  const handleNotificationClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setNotification({ ...notification, open: false });
-  };
 
   // --- レンダリング ---
   if (loading) {
@@ -251,11 +246,6 @@ const EventCalendar = () => {
           </Box>
         </Dialog>
 
-        <Snackbar open={notification.open} autoHideDuration={6000} onClose={handleNotificationClose}>
-          <Alert onClose={handleNotificationClose} severity={notification.severity} sx={{ width: '100%' }}>
-            {notification.message}
-          </Alert>
-        </Snackbar>
       </Box>
     </LocalizationProvider>
   );

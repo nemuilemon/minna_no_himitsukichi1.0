@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(helmet());
 
 const corsOptions = {
-  origin: 'http://localhost:4000', // クライアントのオリジン
+  origin: ['http://localhost:4000', 'http://localhost:4001', 'http://localhost:4002', 'http://localhost:4003'], // 複数のクライアントポートを許可
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
