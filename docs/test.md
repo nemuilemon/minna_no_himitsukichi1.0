@@ -1,4 +1,6 @@
-# Frontend Testing Documentation
+# Testing Documentation
+
+## Frontend Testing (Client-Side)
 
 ## **Quick Start**
 
@@ -275,3 +277,274 @@ npm run test:frontend -- --testTimeout=10000
 - User interactions (logout, drawer toggle)
 
 This testing setup provides comprehensive coverage of your frontend components and ensures regression protection for critical user workflows.
+
+---
+
+## Backend Testing (API)
+
+### **Quick Start**
+
+```bash
+# Run all backend tests
+npm run test:backend
+
+# Run specific test file
+npx jest tests/auth.test.js --config jest.config.backend.js
+npx jest tests/todos.test.js --config jest.config.backend.js
+npx jest tests/transactions.test.js --config jest.config.backend.js
+
+# Run tests with verbose output
+npm run test:backend -- --verbose
+
+# Run tests in watch mode
+npm run test:backend -- --watch
+
+# Run with coverage
+npm run test:backend -- --coverage
+```
+
+### **Test Structure Overview**
+
+```
+tests/
+├── auth.test.js           # Authentication API tests
+├── todos.test.js          # Todos API tests
+└── transactions.test.js   # Transactions API tests
+
+jest.config.backend.js     # Backend Jest configuration
+jest.setup.backend.js      # Test setup file
+```
+
+### **Test Categories**
+
+#### **1. Authentication API Tests (`auth.test.js`)**
+
+**Success Cases:**
+- ✅ POST `/api/login` with valid credentials returns 200 OK and JWT token
+- ✅ POST `/api/guest-login` returns 200 OK and JWT token
+- ✅ POST `/api/register` returns 201 Created for valid registration
+- ✅ Token generation with correct expiration (1 hour)
+- ✅ Unique tokens for different users
+
+**Failure Cases:**
+- ✅ POST `/api/login` returns 401 Unauthorized for incorrect password
+- ✅ POST `/api/login` returns 401 Unauthorized for non-existent user
+- ✅ Validation for empty username/password fields
+- ✅ Database error handling
+- ✅ Security: No sensitive data leakage in error responses
+- ✅ SQL injection attempt handling
+
+**Coverage: 20+ test cases**
+
+#### **2. Todos API Tests (`todos.test.js`)**
+
+**Success Cases:**
+- ✅ GET `/api/todos` returns array of user's todos
+- ✅ POST `/api/todos` returns 201 Created with new todo object
+- ✅ PUT `/api/todos/:id` updates todo and returns updated object
+- ✅ DELETE `/api/todos/:id` deletes todo with success message
+- ✅ GET `/api/todos/priority` returns priority todos
+- ✅ PUT `/api/todos/reorder` reorders todos successfully
+
+**Failure Cases:**
+- ✅ 401 Unauthorized without auth token
+- ✅ Database error handling
+- ✅ Invalid data type handling
+- ✅ Non-existent todo handling
+
+**Data Isolation:**
+- ✅ Users can only access their own todos
+- ✅ Prevents unauthorized access to other users' data
+
+**Coverage: 25+ test cases**
+
+#### **3. Transactions API Tests (`transactions.test.js`)**
+
+**Success Cases:**
+- ✅ GET `/api/transactions` returns user's transaction history
+- ✅ POST `/api/transactions` returns 201 Created with new transaction
+- ✅ PUT `/api/transactions/:id` updates transaction successfully
+- ✅ DELETE `/api/transactions/:id` deletes transaction
+- ✅ GET `/api/transactions/summary/current-month` returns financial summary
+
+**Failure Cases:**
+- ✅ 401 Unauthorized without auth token
+- ✅ 400 Bad Request for negative amounts (validation test)
+- ✅ 400 Bad Request for string amounts (validation test)
+- ✅ 400 Bad Request for zero amounts
+- ✅ Invalid transaction type handling
+- ✅ Invalid date format handling
+- ✅ Database constraint violations
+
+**Input Validation Edge Cases:**
+- ✅ Decimal amounts (99.99)
+- ✅ Very small amounts (0.01)
+- ✅ Large amounts (999999.99)
+- ✅ Empty descriptions
+- ✅ Very long descriptions
+
+**Data Isolation:**
+- ✅ Users can only access their own transactions
+- ✅ Prevents unauthorized access to financial data
+
+**Coverage: 40+ test cases**
+
+### **Running Specific Test Scenarios**
+
+```bash
+# Run only success cases
+npx jest --config jest.config.backend.js --testNamePattern="Success Cases"
+
+# Run only failure cases
+npx jest --config jest.config.backend.js --testNamePattern="Failure Cases"
+
+# Run specific test
+npx jest --config jest.config.backend.js --testNamePattern="should return 200 OK and JWT token"
+
+# Run authentication tests only
+npx jest tests/auth.test.js --config jest.config.backend.js
+
+# Run with coverage report
+npx jest --config jest.config.backend.js --coverage
+```
+
+### **Test Debugging**
+
+```bash
+# Run tests with detailed output
+npx jest --config jest.config.backend.js --verbose --no-cache
+
+# Debug specific failing test
+npx jest tests/auth.test.js --config jest.config.backend.js --verbose --runInBand
+
+# Single worker mode (helpful for debugging)
+npx jest --config jest.config.backend.js --maxWorkers=1
+```
+
+### **Understanding Backend Test Output**
+
+**✅ Passing Test:**
+```
+✓ should return 200 OK and JWT token for valid credentials (45 ms)
+```
+
+**❌ Failing Test:**
+```
+✗ should return 401 Unauthorized for incorrect password (23 ms)
+
+expect(received).toBe(expected) // Object.is equality
+
+Expected: 401
+Received: 500
+```
+
+### **API Testing Patterns Used**
+
+#### **1. HTTP Status Code Testing**
+```javascript
+expect(res.statusCode).toBe(200);
+expect(res.statusCode).toBe(401);
+expect(res.statusCode).toBe(500);
+```
+
+#### **2. Response Body Validation**
+```javascript
+expect(res.body).toHaveProperty('token');
+expect(res.body).toEqual(expectedObject);
+expect(Array.isArray(res.body)).toBe(true);
+```
+
+#### **3. Model Function Call Verification**
+```javascript
+expect(UserModel.findByUsername).toHaveBeenCalledWith('testuser');
+expect(TodoModel.create).toHaveBeenCalledWith(1, 'New Todo', ...);
+```
+
+#### **4. Authentication Testing**
+```javascript
+// Mock authenticated user
+app.use('/api/todos', (req, res, next) => {
+  req.user = { userId: 1 };
+  next();
+}, todosRouter);
+
+// Mock unauthorized access
+app.use('/api/todos', (req, res, next) => {
+  res.status(401).json({ error: 'Unauthorized' });
+}, todosRouter);
+```
+
+### **Mocking Strategy**
+
+#### **Model Mocking:**
+```javascript
+jest.mock('../models/todoModel');
+TodoModel.getAll.mockResolvedValue(mockData);
+TodoModel.create.mockRejectedValue(new Error('Database error'));
+```
+
+#### **Authentication Mocking:**
+```javascript
+// Different users for isolation testing
+const createApp = (authMock = null) => {
+  // Setup different auth scenarios
+  req.user = { userId: 1 }; // User 1
+  req.user = { userId: 2 }; // User 2
+};
+```
+
+### **Data Isolation Verification**
+
+The tests verify critical security requirements:
+
+1. **User Data Isolation**: Each user can only access their own data
+2. **Authentication Required**: All protected endpoints require valid auth
+3. **Input Validation**: Invalid data is properly rejected
+4. **Error Handling**: Database errors are handled gracefully
+
+### **Test Coverage Areas**
+
+#### **Authentication (`routes/auth.js`)**
+- Login with username/password
+- Guest login functionality
+- User registration
+- JWT token generation and validation
+- Error handling for invalid credentials
+
+#### **Todos (`routes/todos.js`)**
+- CRUD operations (Create, Read, Update, Delete)
+- Priority todo filtering
+- Todo reordering
+- Category management
+- Data isolation between users
+
+#### **Transactions (`routes/transactions.js`)**
+- Financial transaction CRUD operations
+- Monthly summary calculations
+- Input validation (amounts, dates, types)
+- Data isolation between users
+- Edge case handling
+
+### **Integration with CI/CD**
+
+```bash
+# Production test run (for CI)
+npm run test:backend -- --ci --coverage --watchAll=false
+
+# Test with specific timeout
+npm run test:backend -- --testTimeout=10000
+
+# Parallel execution
+npm run test:backend -- --maxWorkers=4
+```
+
+### **Best Practices for Backend Testing**
+
+1. **Test API Contracts**: Verify exact status codes and response formats
+2. **Mock External Dependencies**: Database models, external APIs
+3. **Test Data Isolation**: Ensure users can't access each other's data
+4. **Validate Input Edge Cases**: Negative numbers, very large values, invalid formats
+5. **Test Error Scenarios**: Database failures, invalid authentication
+6. **Security Testing**: SQL injection attempts, unauthorized access
+
+This comprehensive backend testing setup ensures that your API endpoints function correctly according to their specifications and provides protection against regressions in critical business logic.
