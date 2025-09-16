@@ -4,13 +4,26 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "jest --config jest.config.backend.js --forceExit",
+    "test:frontend": "jest --config jest.config.frontend.js"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "moduleNameMapper": {
+      "\\.css$": "<rootDir>/__mocks__/styleMock.js"
+    }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.2",
+    "@mui/material": "^7.3.2",
+    "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
@@ -18,11 +31,23 @@
     "express-rate-limit": "^8.1.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.5",
     "pg": "^8.16.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@babel/preset-env": "^7.28.3",
+    "@babel/preset-react": "^7.27.1",
+    "@hello-pangea/dnd": "^18.0.1",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "dayjs": "^1.11.18",
+    "jest": "^30.1.3",
+    "jest-environment-jsdom": "^30.1.2",
+    "moment": "^2.30.1",
+    "nodemon": "^3.1.10",
+    "react-big-calendar": "^1.19.4",
+    "supertest": "^7.1.4"
   }
 }

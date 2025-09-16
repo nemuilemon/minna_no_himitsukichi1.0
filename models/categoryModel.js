@@ -1,8 +1,8 @@
-const pool = require('../db');
+const db = require('../db');
 
 class CategoryModel {
   static async getAll(userId) {
-    const result = await pool.query(
+    const result = await db.query(
       "SELECT * FROM categories WHERE user_id = $1 ORDER BY type, name",
       [userId]
     );
@@ -21,7 +21,7 @@ class CategoryModel {
       throw error;
     }
 
-    const result = await pool.query(
+    const result = await db.query(
       "INSERT INTO categories (user_id, name, type) VALUES ($1, $2, $3) RETURNING *",
       [userId, name, type]
     );
@@ -29,7 +29,7 @@ class CategoryModel {
   }
 
   static async findByIdAndUser(id, userId) {
-    const result = await pool.query("SELECT * FROM categories WHERE id = $1 AND user_id = $2", [id, userId]);
+    const result = await db.query("SELECT * FROM categories WHERE id = $1 AND user_id = $2", [id, userId]);
     return result.rows[0];
   }
 
@@ -47,7 +47,7 @@ class CategoryModel {
       throw error;
     }
 
-    const result = await pool.query(
+    const result = await db.query(
       "UPDATE categories SET name = $1, type = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING *",
       [name, type, id]
     );
@@ -56,14 +56,14 @@ class CategoryModel {
   }
 
   static async delete(id, userId) {
-    const usageCheck = await pool.query("SELECT id FROM transactions WHERE category_id = $1 AND user_id = $2", [id, userId]);
+    const usageCheck = await db.query("SELECT id FROM transactions WHERE category_id = $1 AND user_id = $2", [id, userId]);
     if (usageCheck.rows.length > 0) {
       const error = new Error("このカテゴリーは既に使用されているため削除できません。");
       error.status = 409;
       throw error;
     }
 
-    const result = await pool.query("DELETE FROM categories WHERE id = $1 AND user_id = $2 RETURNING *", [id, userId]);
+    const result = await db.query("DELETE FROM categories WHERE id = $1 AND user_id = $2 RETURNING *", [id, userId]);
 
     if (result.rows.length === 0) {
       const error = new Error("対象のカテゴリーが見つからないか、アクセス権がありません。");

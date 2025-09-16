@@ -1,4 +1,4 @@
-const pool = require('../db');
+const db = require('../db');
 const bcrypt = require('bcrypt');
 
 class UserModel {
@@ -6,7 +6,7 @@ class UserModel {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const result = await pool.query(
+    const result = await db.query(
       "INSERT INTO users (username, email, password_hash, last_accessed_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *",
       [username, email, hashedPassword]
     );
@@ -15,12 +15,12 @@ class UserModel {
   }
 
   static async findByUsername(username) {
-    const result = await pool.query("SELECT * FROM users WHERE username = $1", [username]);
+    const result = await db.query("SELECT * FROM users WHERE username = $1", [username]);
     return result.rows[0];
   }
 
   static async updateLastAccessed(userId) {
-    await pool.query("UPDATE users SET last_accessed_at = CURRENT_TIMESTAMP WHERE id = $1", [userId]);
+    await db.query("UPDATE users SET last_accessed_at = CURRENT_TIMESTAMP WHERE id = $1", [userId]);
   }
 
   static async findOrCreateGuest() {
@@ -29,7 +29,7 @@ class UserModel {
     if (!user) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash('guestpassword', salt);
-      const result = await pool.query(
+      const result = await db.query(
         "INSERT INTO users (username, email, password_hash, last_accessed_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING *",
         ['guest', 'guest@example.com', hashedPassword]
       );

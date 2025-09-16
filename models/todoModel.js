@@ -1,4 +1,4 @@
-const pool = require('../db');
+const db = require('../db');
 
 class TodoModel {
   static async create(userId, title, description, priority, due_date, todo_category_id) {
@@ -8,7 +8,7 @@ class TodoModel {
       throw error;
     }
 
-    const result = await pool.query(
+    const result = await db.query(
       "INSERT INTO todos (user_id, title, description, priority, due_date, todo_category_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [userId, title, description, priority, due_date, todo_category_id]
     );
@@ -17,7 +17,7 @@ class TodoModel {
   }
 
   static async getAll(userId) {
-    const result = await pool.query(
+    const result = await db.query(
       `SELECT t.*, tc.name AS category_name
        FROM todos t
        LEFT JOIN todo_categories tc ON t.todo_category_id = tc.id
@@ -30,7 +30,7 @@ class TodoModel {
   }
 
   static async getPriority(userId) {
-    const result = await pool.query(
+    const result = await db.query(
       `SELECT t.*, tc.name AS category_name
        FROM todos t
        LEFT JOIN todo_categories tc ON t.todo_category_id = tc.id
@@ -73,7 +73,7 @@ class TodoModel {
   }
 
   static async findByIdAndUser(id, userId) {
-    const result = await pool.query("SELECT * FROM todos WHERE id = $1 AND user_id = $2", [id, userId]);
+    const result = await db.query("SELECT * FROM todos WHERE id = $1 AND user_id = $2", [id, userId]);
     return result.rows[0];
   }
 
@@ -85,7 +85,7 @@ class TodoModel {
       throw error;
     }
 
-    const result = await pool.query(
+    const result = await db.query(
       "UPDATE todos SET title = $1, description = $2, priority = $3, due_date = $4, todo_category_id = $5, is_completed = $6, updated_at = CURRENT_TIMESTAMP WHERE id = $7 RETURNING *",
       [title, description, priority, due_date, todo_category_id, is_completed, id]
     );
@@ -94,7 +94,7 @@ class TodoModel {
   }
 
   static async delete(id, userId) {
-    const result = await pool.query("DELETE FROM todos WHERE id = $1 AND user_id = $2 RETURNING *", [id, userId]);
+    const result = await db.query("DELETE FROM todos WHERE id = $1 AND user_id = $2 RETURNING *", [id, userId]);
 
     if (result.rows.length === 0) {
       const error = new Error("対象のToDoが見つからないか、アクセス権がありません。");
