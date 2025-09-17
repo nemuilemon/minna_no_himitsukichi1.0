@@ -15,7 +15,9 @@
       "Bash(PORT=4002 npm start)",
       "Bash(PORT=4003 npm start)",
       "Bash(npm install:*)",
-      "Bash(npx jest:*)"
+      "Bash(npx jest:*)",
+      "Bash(set PORT=4002)",
+      "Bash($env:PORT=4002)"
     ],
     "deny": [],
     "ask": []

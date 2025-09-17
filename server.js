@@ -35,7 +35,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // 3. サーバーがリッスンするポート番号を設定する
-const port = 3000;
+const port = process.env.PORT || 3045;
 
 // 4. ルーターをインポートして使用する
 const authRouter = require('./routes/auth');

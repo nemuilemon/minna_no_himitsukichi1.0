@@ -50,7 +50,7 @@ class TodoModel {
       throw error;
     }
 
-    const client = await pool.connect();
+    const client = await db.connect();
     try {
       await client.query('BEGIN');
 

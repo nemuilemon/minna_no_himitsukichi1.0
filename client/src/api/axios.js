@@ -3,7 +3,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:3000/api', 
+  baseURL: 'http://localhost:3045/api', 
 });
 
 // リクエストインターセプター：すべてのリクエストにトークンを付与
